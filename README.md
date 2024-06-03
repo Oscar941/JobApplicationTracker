@@ -1,1 +1,1 @@
-# JobApplicationTracker
+The JobApplicationTracker project's backend server is crafted using Flask to streamline your job search process. It features tailored endpoints for efficient management of job applications and user profiles, ensuring a seamless interaction with the database. Dive into the realm of organized job tracking with our robust server functionality.
