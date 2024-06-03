@@ -1,0 +1,16 @@
+{
+  "name": "job_application_tracker",
+  "version": "1.0.0",
+  "description": "Job Application Tracker frontend",
+  "main": "main.js",
+  "scripts": {
+    "start": "parcel index.html",
+    "build": "parcel build index.html"
+  },
+  "dependencies": {
+    "axios": "^0.21.1"
+  },
+  "devDependencies": {
+    "parcel": "^2.0.0"
+  }
+}
