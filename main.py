@@ -27,7 +27,11 @@ def create_tables():
 @app.route('/applications', methods=['POST'])
 def add_application():
     data = request.json
-    new_application = JobApplication(title=data['title'], company=data['company'], status=data.get('status', "Applied"))
+    new_application = JobApplication(
+        title=data['title'], 
+        company=data['company'], 
+        status=data.get('status', "Applied")
+    )
     db.session.add(new_application)
     db.session.commit()
     return jsonify({'message': 'Job application added'}), 201
@@ -35,7 +39,10 @@ def add_application():
 @app.route('/applications', methods=['GET'])
 def get_applications():
     applications = JobApplication.query.all()
-    return jsonify([{'id': app.id, 'title': app.title, 'company': app.company, 'status': app.status} for app in applications])
+    return jsonify([
+        {'id': app.id, 'title': app.title, 
+         'company': app.company, 'status': app.status} for app in applications
+    ])
 
 @app.route('/applications/<int:id>', methods=['PUT'])
 def update_application(id):
@@ -65,7 +72,9 @@ def add_user():
 @app.route('/users', methods=['GET'])
 def get_users():
     users = User.query.all()
-    return jsonify([{'id': user.id, 'username': user.username, 'email': user.email} for user in users])
+    return jsonify([
+        {'id': user.id, 'username': user.username, 'email': user.email} for user in users
+    ])
 
 @app.route('/users/<int:id>', methods=['PUT'])
 def update_user(id):
