@@ -26,27 +26,36 @@ def add_application(application_details):
     with DBConnection(DATABASE_PATH) as conn:
         sql = '''INSERT INTO applications(company_name, position, date_applied, status, notes)
                  VALUES(?,?,?,?,?)'''
-        cur = conn.cursor()
-        cur.execute(sql, (application_details['company_name'], application_details['position'],
-                          application_details['date_applied'], application_details['status'],
-                          application_details['notes']))
-        conn.commit()
+        try:
+            cur = conn.cursor()
+            cur.execute(sql, (application_details['company_name'], application_details['position'],
+                              application_details['date_applied'], application_details['status'],
+                              application_details['notes']))
+            conn.commit()
+        finally:
+            cur.close()
 
 def get_applications():
     with DBConnection(DATABASE_PATH) as conn:
-        cur = conn.cursor()
-        cur.execute("SELECT * FROM applications")
-        applications = cur.fetchall()
-        return applications
+        try:
+            cur = conn.cursor()
+            cur.execute("SELECT * FROM applications")
+            applications = cur.fetchall()
+            return applications
+        finally:
+            cur.close()
 
 def update_application(app_id, updates):
     with DBConnection(DATABASE_PATH) as conn:
-        sql = f"UPDATE applications SET "
+        sql = "UPDATE applications SET "
         sql += ', '.join([f"{column} = ?" for column in updates.keys()])
         sql += " WHERE id = ?"
-        cur = conn.cursor()
-        cur.execute(sql, list(updates.values()) + [app_id])
-        conn.commit()
+        try:
+            cur = conn.cursor()
+            cur.execute(sql, list(updates.values()) + [app_id])
+            conn.commit()
+        finally:
+            cur.close()
 
 def change_status(app_id, new_status):
-    update_application(app_id, {'status': new_definitions})
+    update_application(app_id, {'status': new_status})
