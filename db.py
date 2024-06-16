@@ -42,14 +42,20 @@ def init_db():
 def add_user(username, password, email):
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute('INSERT INTO user (username, password, email) VALUES (?, ?, ?)', (username, password, email))
+    cursor.execute(
+        'INSERT INTO user (username, password, email) VALUES (?, ?, ?)',
+        (username, password, email)
+    )
     conn.commit()
     conn.close()
 
-def add_application(user_id, company_name, position, status, application_date, response_date=None, notes=None):
+def add_application(user_id, company_name, position, status, application_date, response_location=None,  notes=None):
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute('INSERT INTO application (user_id, company_name, position, status, application_date, response_date, notes) VALUES (?, ?, ?, ?, ?, ?, ?)', (user_id, company_name, position, status, application_date, response_date, notes))
+    cursor.execute(
+        'INSERT INTO application (user_id, company_name, position, status, application_date, response_date, notes) VALUES (?, ?, ?, ?, ?, ?, ?)',
+        (user_id, company_name, position, status, application_date, response_location, notes)
+    )
     conn.commit()
     conn.close()
 
@@ -64,7 +70,10 @@ def get_applications_by_user(user_id):
 def update_application_status(application_id, new_status):
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute('UPDATE application SET status = ? WHERE id = ?', (new_status, application_id))
+    cursor.execute(
+        'UPDATE application SET status = ? WHERE id = ?',
+        (new_status, application_id)
+    )
     conn.commit()
     conn.close()
 
