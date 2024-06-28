@@ -1,5 +1,5 @@
 import os
-from dotenv import load_env
+from dotenv import load_dotenv
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -11,36 +11,59 @@ EMAIL_SENDER_PASSWORD = os.getenv('EMAIL_PASSWORD')
 EMAIL_SMTP_SERVER = os.getenv('SMTP_SERVER', 'smtp.gmail.com')
 EMAIL_SMTP_PORT = int(os.getenv('SMTP_PORT', 587))
 
-def dispatch_email(recipient_address, email_subject, email_content):
-    try:
-        email_message = MIMEMultipart()
-        email_message['From'] = EMAIL_SENDER_ADDRESS
-        email_message['To'] = recipient_address
-        email_message['Subject'] = email_subject
-        email_message.attach(MIMEText(email_content, 'plain'))
+class EmailDispatcher:
+    def __init__(self, server, port, user, password):
+        self.server = server
+        self.port = port
+        self.user = user
+        self.password = password
+        self.session = None
 
-        smtp_session = smtplib.SMTP(EMAIL_SMTP_SERVER, EMAIL_SMTP_PORT)
-        smtp_session.starttls()
-        smtp_session.login(EMAIL_SENDER_ADDRESS, EMAIL_SENDER_PASSWORD)
-        
-        final_email_text = email_message.as_string()
-        smtp_session.sendmail(EMAIL_SENDER_ADDRESS, recipient_address, final_email_text)
-        smtp_session.quit()
-        print('Email successfully sent to', recipient_address)
+    def start_session(self):
+        if self.session is None:
+            self.session = smtplib.SMTP(self.server, self.port)
+            self.session.starttls()
+            self.session.login(self.user, self.password)
+
+    def send_email(self, recipient_address, email_subject, email_content):
+        try:
+            email_message = MIMEMultipart()
+            email_message['From'] = EMAIL_SENDER_ADDRESS
+            email_message['To'] = recipient_address
+            email_message['Subject'] = email_subject
+            email_message.attach(MIMEText(email_content, 'plain'))
+
+            final_email_text = email_message.as_string()
+            self.session.sendmail(EMAIL_SENDER_ADDRESS, recipient_ address, final_email_text)
+            print('Email successfully sent to', recipient_address)
+
+        except Exception as error:
+            print('Failed to send email:', error)
     
-    except Exception as error:
-        print('Failed to send email:', error)
+    def end_session(self):
+        if self.session is not None:
+            self.session.quit()
+            self.session = None
 
-def notify_application_status_update(applicant_email, application_details):
-    email_subject = f"Update on Your Application for {application_details['position']} at {application_details['company']}"
-    email_body = f"Dear {application_details['applicant_name']},\n\nWe are pleased to inform you that the status of your application for {application_details['position']} at {application_details['company']} has been updated to {application_details['status']}.\n\nBest Regards,\nJobApplicationTracker Team"
-    dispatch_email(applicant_email, email_subject, email_body)
+email_dispatcher = EmailDispatcher(EMAIL_SMTP_SERVER, EMAIL_SMTP_PORT, EMAIL_SENDER_ADDRESS, EMAIL_SENDER_PASSWORD)
 
-def send_interview_reminder(applicant_email, interview_details):
-    email_subject = f"Interview Reminder: {interview_details['company']} - {interview_details['position']}"
-    email_body = f"Dear {interview_details['applicant_name']},\n\nJust a friendly reminder about your upcoming interview for {interview_details['position']} at {interview_details['company']} on {interview_details['date']} at {interview_details['time']}.\n\nGood luck!\n\nBest Regards,\nJobApplicationTracker Team"
-    dispatch_email(applicant_email, email_subject, email_body)
+def notify_applicants(applicant_emails, email_subject, email_content_func):
+    email_dispatcher.start_session()
+    
+    for applicant_email, details in applicant_emails.items():
+        email_body = email_content_func(details)
+        email_dispatcher.send_email(applicant_email, email_subject(details), email_body)
+    
+    email_dispatcher.end_session()
 
-def dispatch_general_notification(recipient_email, notification_subject, notification_message):
-    email_body = f"Hi,\n\n{notification_message}\n\nBest Regards,\nJobApplicationTracker Team"
-    dispatch_email(recipient_email, notification_subject, email_body)
+applicant_emails = {
+    # email: application_details,
+}
+
+def application_status_subject(details):
+    return f"Update on Your Application for {details['position']} at {details['company']}"
+
+def application_status_body(details):
+    return f"Dear {details['applicant_name']},\n\nWe are pleased to inform you that the status of your application for {details['position']} at {pdetails['company']} has been updated to {details['status']}.\n\nBest Regards,\nJobApplicationTracker Team"
+
+notify_applicants(applicant_emails, application_status_subject, application_status_body)
