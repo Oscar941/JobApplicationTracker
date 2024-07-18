@@ -1,0 +1,98 @@
+body, h1, h2, h3, p, form, input, button {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Arial', sans-serif;
+  line-height: 1.6;
+  background-color: #f4f4f4;
+  padding: 20px;
+}
+
+.container {
+  max-width: 1200px;
+  margin: auto;
+  padding: 20px;
+  background: #ffffff;
+}
+
+.header, .footer {
+  text-align: center;
+  padding: 10px 0;
+}
+
+.header {
+  background: #333;
+  color: #ffffff;
+}
+
+.footer {
+  background: #f4f4f4;
+}
+
+.job-list {
+  list-style: none;
+  margin: 20px 0;
+}
+
+.job {
+  background: #e8e8e8;
+  margin-bottom: 10px;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.job h3 {
+  margin-bottom: 5px;
+}
+
+form {
+  background: #f3f3f3;
+  padding: 20px;
+  border-radius: 5px;
+}
+
+.input-group {
+  margin-bottom: 20px;
+}
+
+.input-group label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.input-group input, .input-group textarea, .input-group select {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.button {
+  display: inline-block;
+  padding: 10px 20px;
+  cursor: pointer;
+  background: #333;
+  color: #ffffff;
+  border: none;
+  border-radius: 5px;
+}
+
+.button:hover {
+  background: #555;
+}
+
+@media (max-width: 768px) {
+  
+  .container {
+    width: 95%;
+  }
+
+  .input-group input, .input-group textarea, .input-group select {
+    padding: 10px;
+  }
+
+}
